@@ -44,10 +44,17 @@ export default function FullScreenDemo() {
           },
         },
         {
-          label: "Create",
-          icon: "pi pi-plus",
+          label: "Problems",
+          icon: "pi pi-list",
           command: () => {
-            router.push("/create");
+            router.push("/dashboard/problems");
+          },
+        },
+        {
+          label: "Create Problem",
+          icon: "pi pi-plus-circle",
+          command: () => {
+            router.push("/dashboard/create-problem");
           },
         },
         {

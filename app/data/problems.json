@@ -1,0 +1,182 @@
+[
+  {
+    "id": "1",
+    "title": "Two Sum",
+    "description": "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.",
+    "resourceLink": "https://leetcode.com/problems/two-sum/",
+    "practiceLink": "https://leetcode.com/problems/two-sum/",
+    "difficulty": "Easy",
+    "createdAt": "2023-05-15T10:30:00Z"
+  },
+  {
+    "id": "2",
+    "title": "Add Two Numbers",
+    "description": "You are given two non-empty linked lists representing two non-negative integers. The digits are stored in reverse order, and each node contains a single digit.",
+    "resourceLink": "https://leetcode.com/problems/add-two-numbers/",
+    "practiceLink": "https://leetcode.com/problems/add-two-numbers/",
+    "difficulty": "Medium",
+    "createdAt": "2023-05-16T14:20:00Z"
+  },
+  {
+    "id": "3",
+    "title": "Longest Substring Without Repeating Characters",
+    "description": "Given a string, find the length of the longest substring without repeating characters.",
+    "resourceLink": "https://leetcode.com/problems/longest-substring-without-repeating-characters/",
+    "practiceLink": "https://leetcode.com/problems/longest-substring-without-repeating-characters/",
+    "difficulty": "Medium",
+    "createdAt": "2023-05-17T09:00:00Z"
+  },
+  {
+    "id": "4",
+    "title": "Median of Two Sorted Arrays",
+    "description": "Given two sorted arrays nums1 and nums2 of size m and n respectively, return the median of the two sorted arrays.",
+    "resourceLink": "https://leetcode.com/problems/median-of-two-sorted-arrays/",
+    "practiceLink": "https://leetcode.com/problems/median-of-two-sorted-arrays/",
+    "difficulty": "Hard",
+    "createdAt": "2023-05-18T11:45:00Z"
+  },
+  {
+    "id": "5",
+    "title": "Longest Palindromic Substring",
+    "description": "Given a string s, return the longest palindromic substring in s.",
+    "resourceLink": "https://leetcode.com/problems/longest-palindromic-substring/",
+    "practiceLink": "https://leetcode.com/problems/longest-palindromic-substring/",
+    "difficulty": "Medium",
+    "createdAt": "2023-05-19T08:10:00Z"
+  },
+  {
+    "id": "6",
+    "title": "Zigzag Conversion",
+    "description": "Convert a string to a zigzag pattern on a given number of rows.",
+    "resourceLink": "https://leetcode.com/problems/zigzag-conversion/",
+    "practiceLink": "https://leetcode.com/problems/zigzag-conversion/",
+    "difficulty": "Medium",
+    "createdAt": "2023-05-20T13:00:00Z"
+  },
+  {
+    "id": "7",
+    "title": "Reverse Integer",
+    "description": "Given a signed 32-bit integer x, return x with its digits reversed.",
+    "resourceLink": "https://leetcode.com/problems/reverse-integer/",
+    "practiceLink": "https://leetcode.com/problems/reverse-integer/",
+    "difficulty": "Easy",
+    "createdAt": "2023-05-21T07:50:00Z"
+  },
+  {
+    "id": "8",
+    "title": "String to Integer (atoi)",
+    "description": "Implement the myAtoi(string s) function, which converts a string to a 32-bit signed integer.",
+    "resourceLink": "https://leetcode.com/problems/string-to-integer-atoi/",
+    "practiceLink": "https://leetcode.com/problems/string-to-integer-atoi/",
+    "difficulty": "Medium",
+    "createdAt": "2023-05-22T16:30:00Z"
+  },
+  {
+    "id": "9",
+    "title": "Palindrome Number",
+    "description": "Given an integer x, return true if x is palindrome integer.",
+    "resourceLink": "https://leetcode.com/problems/palindrome-number/",
+    "practiceLink": "https://leetcode.com/problems/palindrome-number/",
+    "difficulty": "Easy",
+    "createdAt": "2023-05-23T12:00:00Z"
+  },
+  {
+    "id": "10",
+    "title": "Container With Most Water",
+    "description": "Given n non-negative integers a1, a2, ..., an, find two lines which together with the x-axis forms a container that contains the most water.",
+    "resourceLink": "https://leetcode.com/problems/container-with-most-water/",
+    "practiceLink": "https://leetcode.com/problems/container-with-most-water/",
+    "difficulty": "Medium",
+    "createdAt": "2023-05-24T18:40:00Z"
+  },
+  {
+    "id": "11",
+    "title": "Roman to Integer",
+    "description": "Convert a roman numeral to an integer.",
+    "resourceLink": "https://leetcode.com/problems/roman-to-integer/",
+    "practiceLink": "https://leetcode.com/problems/roman-to-integer/",
+    "difficulty": "Easy",
+    "createdAt": "2023-05-25T14:15:00Z"
+  },
+  {
+    "id": "12",
+    "title": "Integer to Roman",
+    "description": "Convert an integer to a roman numeral.",
+    "resourceLink": "https://leetcode.com/problems/integer-to-roman/",
+    "practiceLink": "https://leetcode.com/problems/integer-to-roman/",
+    "difficulty": "Medium",
+    "createdAt": "2023-05-26T09:45:00Z"
+  },
+  {
+    "id": "13",
+    "title": "Longest Common Prefix",
+    "description": "Write a function to find the longest common prefix string amongst an array of strings.",
+    "resourceLink": "https://leetcode.com/problems/longest-common-prefix/",
+    "practiceLink": "https://leetcode.com/problems/longest-common-prefix/",
+    "difficulty": "Easy",
+    "createdAt": "2023-05-27T10:30:00Z"
+  },
+  {
+    "id": "14",
+    "title": "3Sum",
+    "description": "Given an integer array nums, return all the triplets [nums[i], nums[j], nums[k]] such that i != j != k, and nums[i] + nums[j] + nums[k] == 0.",
+    "resourceLink": "https://leetcode.com/problems/3sum/",
+    "practiceLink": "https://leetcode.com/problems/3sum/",
+    "difficulty": "Medium",
+    "createdAt": "2023-05-28T15:00:00Z"
+  },
+  {
+    "id": "15",
+    "title": "Valid Parentheses",
+    "description": "Given a string s containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.",
+    "resourceLink": "https://leetcode.com/problems/valid-parentheses/",
+    "practiceLink": "https://leetcode.com/problems/valid-parentheses/",
+    "difficulty": "Easy",
+    "createdAt": "2023-05-29T12:30:00Z"
+  },
+  {
+    "id": "16",
+    "title": "Merge Two Sorted Lists",
+    "description": "Merge two sorted linked lists and return it as a new sorted list.",
+    "resourceLink": "https://leetcode.com/problems/merge-two-sorted-lists/",
+    "practiceLink": "https://leetcode.com/problems/merge-two-sorted-lists/",
+    "difficulty": "Easy",
+    "createdAt": "2023-05-30T08:00:00Z"
+  },
+  {
+    "id": "17",
+    "title": "Generate Parentheses",
+    "description": "Given n pairs of parentheses, write a function to generate all combinations of well-formed parentheses.",
+    "resourceLink": "https://leetcode.com/problems/generate-parentheses/",
+    "practiceLink": "https://leetcode.com/problems/generate-parentheses/",
+    "difficulty": "Medium",
+    "createdAt": "2023-05-31T11:45:00Z"
+  },
+  {
+    "id": "18",
+    "title": "Swap Nodes in Pairs",
+    "description": "Given a linked list, swap every two adjacent nodes and return its head.",
+    "resourceLink": "https://leetcode.com/problems/swap-nodes-in-pairs/",
+    "practiceLink": "https://leetcode.com/problems/swap-nodes-in-pairs/",
+    "difficulty": "Medium",
+    "createdAt": "2023-06-01T13:15:00Z"
+  },
+  {
+    "id": "19",
+    "title": "Remove Nth Node From End of List",
+    "description": "Given the head of a linked list, remove the nth node from the end of the list and return its head.",
+    "resourceLink": "https://leetcode.com/problems/remove-nth-node-from-end-of-list/",
+    "practiceLink": "https://leetcode.com/problems/remove-nth-node-from-end-of-list/",
+    "difficulty": "Medium",
+    "createdAt": "2023-06-02T14:20:00Z"
+  },
+  {
+    "id": "20",
+    "title": "Valid Sudoku",
+    "description": "Determine if a 9x9 Sudoku board is valid.",
+    "resourceLink": "https://leetcode.com/problems/valid-sudoku/",
+    "practiceLink": "https://leetcode.com/problems/valid-sudoku/",
+    "difficulty": "Medium",
+    "createdAt": "2023-06-03T16:40:00Z"
+  }
+]
