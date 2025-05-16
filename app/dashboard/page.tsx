@@ -11,18 +11,17 @@ export default function Dashboard() {
   const [doughnutData, setDoughnutData] = useState({});
   const [lineData, setLineData] = useState({});
 
-
   useEffect(() => {
     setBarData({
       labels: ["Easy", "Medium", "Hard"],
       datasets: [
         {
           label: "Problems by Difficulty",
-          data: [140, 300, 250], // Example: Increased numbers
+          data: [140, 300, 250],
           backgroundColor: [
-            "rgba(75, 192, 192, 0.7)", // Green for Easy
-            "rgba(255, 159, 64, 0.7)", // Orange for Medium
-            "rgba(255, 99, 132, 0.7)", // Red for Hard
+            "rgba(75, 192, 192, 0.7)",
+            "rgba(255, 159, 64, 0.7)",
+            "rgba(255, 99, 132, 0.7)",
           ],
           borderColor: [
             "rgb(75, 192, 192)",
@@ -60,7 +59,7 @@ export default function Dashboard() {
       ],
       datasets: [
         {
-          data: [4500, 2400, 3100], // Example: User attempts data
+          data: [4500, 2400, 3100],
           backgroundColor: [
             "rgba(40, 167, 69, 0.7)",
             "rgba(255, 193, 7, 0.7)",
@@ -81,45 +80,44 @@ export default function Dashboard() {
       datasets: [
         {
           label: "New Submissions This Week",
-          data: [250, 400, 320, 500, 610, 450, 700], // Example: Submission counts
+          data: [250, 400, 320, 500, 610, 450, 700],
           fill: true,
           backgroundColor: "rgba(54, 162, 235, 0.2)",
           borderColor: "rgb(54, 162, 235)",
-          tension: 0.4, // Smoother line
+          tension: 0.4,
         },
       ],
     });
   }, []);
 
-  // Enhanced admin stats for a coding platform
   const stats = [
     {
       label: "Total Users",
-      value: "12,545", // Example: Larger user base
+      value: "12,545",
       icon: "pi pi-users",
       color: "bg-blue-100 text-blue-600",
     },
     {
       label: "Active Users (Today)",
       value: "1,830",
-      icon: "pi pi-user-plus", // Changed icon
+      icon: "pi pi-user-plus",
       color: "bg-teal-100 text-teal-600",
     },
     {
       label: "Total Problems",
-      value: "690", // Example: Total problems
+      value: "690",
       icon: "pi pi-book",
       color: "bg-indigo-100 text-indigo-600",
     },
     {
       label: "Total Submissions",
-      value: "150,320", // Example: Higher submission count
+      value: "150,320",
       icon: "pi pi-code",
       color: "bg-green-100 text-green-600",
     },
     {
       label: "Avg. Success Rate",
-      value: "58%", // Example: Platform-wide success rate
+      value: "58%",
       icon: "pi pi-check-circle",
       color: "bg-orange-100 text-orange-600",
     },
@@ -133,8 +131,6 @@ export default function Dashboard() {
 
   return (
     <div className="flex flex-col gap-6 p-8 min-h-screen bg-gray-100">
-      {" "}
-      {/* Slightly lighter bg */}
       <h1 className="text-4xl font-bold text-center text-gray-800">
         Platform Admin Dashboard
       </h1>
@@ -142,7 +138,6 @@ export default function Dashboard() {
         Overview of user activity, content, and platform performance for Code
         Nest.
       </p>
-      {/* Admin Stats - Adjusted grid for more items */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
         {stats.map((stat) => (
           <Card
@@ -151,25 +146,21 @@ export default function Dashboard() {
           >
             <div className="flex flex-row items-center gap-4">
               <span
-                className={`rounded-full ${stat.color} p-4 flex items-center justify-center`} // Increased padding
+                className={`rounded-full ${stat.color} p-4 flex items-center justify-center`}
               >
-                <i className={`${stat.icon} text-3xl`} /> {/* Larger icon */}
+                <i className={`${stat.icon} text-3xl`} />
               </span>
               <div>
                 <div className="text-2xl font-semibold text-gray-700">
-                  {" "}
-                  {/* Larger value */}
                   {stat.value}
                 </div>
-                <div className="text-gray-500 text-md">{stat.label}</div>{" "}
-                {/* Slightly larger label */}
+                <div className="text-gray-500 text-md">{stat.label}</div>
               </div>
             </div>
           </Card>
         ))}
       </div>
       <Divider />
-      {/* Charts */}
       <h2 className="text-2xl font-semibold text-gray-700 mb-4">
         Platform Analytics
       </h2>
@@ -179,7 +170,7 @@ export default function Dashboard() {
             type="bar"
             data={barData}
             options={barOptions}
-            className="w-full h-80" // Explicit height
+            className="w-full h-80"
           />
         </Card>
         <Card title="User Problem Interaction Status" className="shadow-lg">

@@ -20,7 +20,6 @@ export default function FullScreenDemo() {
   const router = useRouter();
   const supabase = createClientForBrowser();
 
-  // Fetch user data on mount
   useEffect(() => {
     const fetchUser = async () => {
       const { data: { user } } = await supabase.auth.getUser();
@@ -68,7 +67,6 @@ export default function FullScreenDemo() {
     },
   ];
 
-  // Get user name and avatar from user metadata (from Google or other providers)
   const userName = user?.user_metadata?.full_name || user?.email || "User";
   const userAvatar = user?.user_metadata?.avatar_url || "https://www.gravatar.com/avatar/05dfd4b41340d09cae045235eb0893c3?d=mp";
 

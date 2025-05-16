@@ -35,15 +35,11 @@ export default function Problems() {
     const fetchProblems = () => {
       setLoading(true);
       try {
-        // Get problems from localStorage if available
         const localProblems = localStorage.getItem("problems");
-
         if (localProblems) {
           setProblems(JSON.parse(localProblems));
         } else {
-          // If no localStorage data, use initial problems from JSON
           setProblems(initialProblems as Problem[]);
-          // Save initial problems to localStorage
           localStorage.setItem("problems", JSON.stringify(initialProblems));
         }
       } catch (error) {

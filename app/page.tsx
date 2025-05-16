@@ -49,7 +49,7 @@ export default function AuthPage() {
       } else {
         console.log('Login successful:', result);
         reset();
-        router.push('/dashboard'); // Redirect to dashboard after successful login
+        router.push('/dashboard');
       }
     } else {
       const result = await signupWithEmailPassword(null, formData);
@@ -58,7 +58,7 @@ export default function AuthPage() {
       } else {
         setSuccess(result.success || 'Registration successful! Please check your email to verify.');
         reset();
-        setTimeout(() => setIsLoginMode(true), 2000); // Switch to login mode after 2 seconds
+        setTimeout(() => setIsLoginMode(true), 2000);
       }
     }
   };
