@@ -1,21 +1,23 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card } from "primereact/card";
 import { InputText } from "primereact/inputtext";
 import { InputTextarea } from "primereact/inputtextarea";
 import { Dropdown } from "primereact/dropdown";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useRef } from "react";
 
 interface ProblemFormData {
+  id?: string;
   title: string;
   description: string;
   resourceLink: string;
   practiceLink: string;
   difficulty: string;
+  createdAt?: string;
 }
 
 export default function CreateProblem() {
@@ -28,7 +30,9 @@ export default function CreateProblem() {
   });
 
   const [loading, setLoading] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
   const toast = useRef<Toast>(null);
 
   const difficulties = [
@@ -36,6 +40,57 @@ export default function CreateProblem() {
     { name: "Medium", value: "Medium" },
     { name: "Hard", value: "Hard" },
   ];
+
+  useEffect(() => {
+    // Check if we're in edit mode
+    const editParam = searchParams?.get("edit");
+    const problemId = searchParams?.get("id");
+
+    if (editParam === "true" && problemId) {
+      setIsEditMode(true);
+
+      try {
+        // Try to get the problem from localStorage
+        const editProblemJson = localStorage.getItem("editProblem");
+        const allProblemsJson = localStorage.getItem("problems");
+
+        if (editProblemJson) {
+          // If we have the specific problem stored, use it
+          const editProblem = JSON.parse(editProblemJson);
+          setFormData(editProblem);
+          // Clean up the stored problem
+          localStorage.removeItem("editProblem");
+        } else if (allProblemsJson) {
+          // Otherwise find it in all problems
+          const allProblems = JSON.parse(allProblemsJson);
+          const problemToEdit = allProblems.find(
+            (p: any) => p.id === problemId
+          );
+
+          if (problemToEdit) {
+            setFormData(problemToEdit);
+          } else {
+            // Problem not found
+            toast.current?.show({
+              severity: "error",
+              summary: "Error",
+              detail: "Problem not found",
+              life: 3000,
+            });
+            router.push("/dashboard/problems");
+          }
+        }
+      } catch (error) {
+        console.error("Error loading problem for editing:", error);
+        toast.current?.show({
+          severity: "error",
+          summary: "Error",
+          detail: "Failed to load problem data",
+          life: 3000,
+        });
+      }
+    }
+  }, [searchParams, router]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -68,45 +123,57 @@ export default function CreateProblem() {
     setLoading(true);
 
     try {
-      // Generate a unique ID for the problem
-      const id = Date.now().toString();
-
-      // Create the problem data object with timestamp
-      const problemData = {
-        id,
-        ...formData,
-        createdAt: new Date().toISOString(),
-      };
-
       // Get existing problems from localStorage
       const existingProblemsJson = localStorage.getItem("problems");
       const existingProblems = existingProblemsJson
         ? JSON.parse(existingProblemsJson)
         : [];
 
-      // Add new problem to the array
-      const updatedProblems = [problemData, ...existingProblems];
+      if (isEditMode && formData.id) {
+        // Update existing problem
+        const updatedProblems = existingProblems.map((p: any) =>
+          p.id === formData.id ? { ...formData } : p
+        );
+        localStorage.setItem("problems", JSON.stringify(updatedProblems));
 
-      // Save back to localStorage
-      localStorage.setItem("problems", JSON.stringify(updatedProblems));
+        toast.current?.show({
+          severity: "success",
+          summary: "Success",
+          detail: "Problem updated successfully",
+          life: 3000,
+        });
+      } else {
+        // Create new problem
+        const newProblemData = {
+          id: Date.now().toString(),
+          ...formData,
+          createdAt: new Date().toISOString(),
+        };
 
-      toast.current?.show({
-        severity: "success",
-        summary: "Success",
-        detail: "Problem created successfully",
-        life: 3000,
-      });
+        // Add new problem to the array
+        const updatedProblems = [newProblemData, ...existingProblems];
+
+        // Save back to localStorage
+        localStorage.setItem("problems", JSON.stringify(updatedProblems));
+
+        toast.current?.show({
+          severity: "success",
+          summary: "Success",
+          detail: "Problem created successfully",
+          life: 3000,
+        });
+      }
 
       // Redirect to problems page after short delay
       setTimeout(() => {
         router.push("/dashboard/problems");
       }, 1500);
     } catch (error) {
-      console.error("Error creating problem:", error);
+      console.error("Error saving problem:", error);
       toast.current?.show({
         severity: "error",
         summary: "Error",
-        detail: "Failed to create problem. Please try again.",
+        detail: "Failed to save problem. Please try again.",
         life: 3000,
       });
     } finally {
@@ -134,18 +201,25 @@ export default function CreateProblem() {
   };
 
   return (
-    <div className="p-8 min-h-screen bg-gray-100">
+    <div className="p-8 min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
       <Toast ref={toast} position="top-center" />
       <div className="mb-6">
-        <h1 className="text-4xl font-bold text-gray-800 mb-2">
-          Create New Problem
+        <h1 className="text-4xl font-bold text-gray-800 mb-2 flex items-center">
+          <i
+            className={`pi ${
+              isEditMode ? "pi-pencil" : "pi-plus-circle"
+            } mr-3 text-blue-500`}
+          ></i>
+          {isEditMode ? "Edit Problem" : "Create New Problem"}
         </h1>
         <p className="text-gray-600">
-          Add a new coding problem to the platform
+          {isEditMode
+            ? "Update the details of the existing problem"
+            : "Add a new coding problem to the platform"}
         </p>
       </div>
 
-      <Card className="shadow-lg">
+      <Card className="shadow-xl border border-gray-200 rounded-lg">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="p-field col-span-2">
             <label
@@ -239,11 +313,11 @@ export default function CreateProblem() {
             />
           </div>
 
-          <div className="col-span-2 flex flex-wrap justify-end gap-3 mt-4">
+          <div className="col-span-2 flex flex-wrap justify-end gap-3 mt-6">
             <Button
               label="Preview JSON"
               icon="pi pi-code"
-              className="p-button-secondary"
+              className="p-button-secondary p-button-outlined"
               onClick={viewJSONPreview}
             />
             <Button
@@ -253,11 +327,20 @@ export default function CreateProblem() {
               onClick={() => router.push("/dashboard/problems")}
             />
             <Button
-              label={loading ? "Saving..." : "Save Problem"}
-              icon="pi pi-save"
+              label={
+                loading
+                  ? isEditMode
+                    ? "Updating..."
+                    : "Saving..."
+                  : isEditMode
+                  ? "Update Problem"
+                  : "Save Problem"
+              }
+              icon={isEditMode ? "pi pi-check" : "pi pi-save"}
               onClick={saveProblem}
               loading={loading}
               disabled={loading}
+              className="p-button-raised shadow-md hover:shadow-lg transition-shadow duration-300"
             />
           </div>
         </div>
