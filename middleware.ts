@@ -1,26 +1,48 @@
-import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
-import { NextRequest, NextResponse } from "next/server";
+import { createServerClient } from '@supabase/ssr';
+import { NextResponse, type NextRequest } from 'next/server';
 
-export async function middleware(req: NextRequest) {
-  const res = NextResponse.next();
-  const supabase = createMiddlewareClient({ req, res });
+const protectedRoutes = ['/dashboard'];
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+export const middleware = async (request: NextRequest) => {
+  let supabaseResponse = NextResponse.next({
+    request,
+  });
 
-  // Protect routes under /dashboard
-  const protectedPaths = ["/dashboard", "/create", "/list"];
-  const isProtected = protectedPaths.some((path) =>
-    req.nextUrl.pathname.startsWith(path)
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll();
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) =>
+            request.cookies.set(name, value)
+          );
+          supabaseResponse = NextResponse.next({
+            request,
+          });
+          cookiesToSet.forEach(({ name, value, options }) =>
+            supabaseResponse.cookies.set(name, value, options)
+          );
+        },
+      },
+    },
   );
-  if (isProtected && !session) {
-    return NextResponse.redirect(new URL("/login", req.url));
+
+  const pathname = request.nextUrl.pathname;
+  const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route));
+
+  const { error } = await supabase.auth.getUser();
+
+  if (isProtectedRoute && error) {
+    return NextResponse.redirect(new URL('/', request.url));
   }
 
-  return res;
-}
+  return supabaseResponse;
+};
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/create/:path*", "/list/:path*"],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
 };

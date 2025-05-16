@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { Sidebar } from "primereact/sidebar";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
@@ -8,13 +8,31 @@ import { Menu } from "primereact/menu";
 import { useRouter } from "next/navigation";
 import { Divider } from "primereact/divider";
 import { Avatar } from "primereact/avatar";
-import { supabase } from "@/app/lib/supabase";
+import { signOut } from "@/app/lib/action";
+import createClientForBrowser from "@/app/lib/supabase/client";
+import type { MenuItem } from 'primereact/menuitem';
+import type { User } from '@supabase/supabase-js';
 
 export default function FullScreenDemo() {
   const [visible, setVisible] = useState<boolean>(false);
-  const toast = useRef(null);
+  const [user, setUser] = useState<User | null>(null);
+  const toast = useRef<Toast>(null);
   const router = useRouter();
-  const items = [
+  const supabase = createClientForBrowser();
+
+  // Fetch user data on mount
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      console.log("User data:", user);
+      if (user) {
+        setUser(user);
+      }
+    };
+    fetchUser();
+  }, [supabase]);
+
+  const items: MenuItem[] = [
     {
       label: "Admin Panel",
       items: [
@@ -36,16 +54,22 @@ export default function FullScreenDemo() {
           label: "Logout",
           icon: "pi pi-sign-out",
           command: async () => {
-            await supabase.auth.signOut();
-            router.push("/login");
+            await signOut();
           },
         },
       ],
     },
   ];
 
+  // Get user name and avatar from user metadata (from Google or other providers)
+  const userName = user?.user_metadata?.full_name || user?.email || "User";
+  const userAvatar = user?.user_metadata?.avatar_url || "https://www.gravatar.com/avatar/05dfd4b41340d09cae045235eb0893c3?d=mp";
+
+  console.log("User name:", userName);
+  console.log("User avatar:", userAvatar);
+
   return (
-    <div className="card flex ">
+    <div className="card flex">
       <Sidebar visible={visible} onHide={() => setVisible(false)}>
         <div className="flex flex-col items-center justify-between h-[85vh]">
           <div>
@@ -55,11 +79,11 @@ export default function FullScreenDemo() {
           <div className="w-full flex flex-col items-center">
             <Divider />
             <Avatar
-              image={
-                "https://www.gravatar.com/avatar/05dfd4b41340d09cae045235eb0893c3?d=mp"
-              }
+              image={userAvatar}
               size="xlarge"
+              shape="circle"
             />
+            <p className="mt-2 text-lg font-medium text-gray-700">{userName}</p>
           </div>
         </div>
       </Sidebar>
