@@ -54,18 +54,20 @@ const signupWithEmailPassword = async (_prev: FormState | null, formData: FormDa
   }
 
   return {
-    success: 'Please check your email',
+    success: 'Registration successful!',
     error: null,
   };
 };
 
 const signinWithEmailPassword = async (_prev: FormState | null, formData: FormData): Promise<FormState> => {
   const supabase = await createClientForServer();
-
   const { data, error } = await supabase.auth.signInWithPassword({
     email: formData.get('email') as string,
     password: formData.get('password') as string,
   });
+
+  console.log('data', data);
+  console.log('error', error);
 
   if (error) {
     console.log('error', error);
@@ -73,9 +75,12 @@ const signinWithEmailPassword = async (_prev: FormState | null, formData: FormDa
       success: null,
       error: error.message,
     };
+  } else {
+    return {
+      success: 'Login successful',
+      error: null,
+    }
   }
-
-  redirect('/');
 };
 
 const sendResetPasswordEmail = async (_prev: FormState | null, formData: FormData): Promise<FormState> => {

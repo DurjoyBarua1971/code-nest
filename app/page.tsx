@@ -5,7 +5,6 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { useRouter } from "next/navigation";
-import "primereact/resources/themes/saga-blue/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 import createClientForBrowser from "./lib/supabase/client";
@@ -68,10 +67,13 @@ export default function AuthPage() {
       } else {
         setSuccess(
           result.success ||
-            "Registration successful! Please check your email to verify."
+            "Registration successful !!"
         );
         reset();
-        setTimeout(() => setIsLoginMode(true), 2000);
+        setTimeout(() => {
+          setSuccess(null);
+          setIsLoginMode(true);
+        }, 2000);
       }
     }
   };
@@ -105,11 +107,11 @@ export default function AuthPage() {
 
         {/* Form Section */}
         <div className="w-full md:w-1/2 px-8">
-          <div className="p-6 bg-white rounded shadow-md max-w-md mx-auto">
+          <div className="p-6 bg-white rounded shadow-md max-w-md mx-auto ">
             <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
               {isLoginMode ? "Login" : "Register"}
             </h2>
-            {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
+            {error && <p className="text-red-500 mb-4 text-center text-wrap break-words">{error}</p>}
             {success && (
               <p className="text-green-500 mb-4 text-center">{success}</p>
             )}

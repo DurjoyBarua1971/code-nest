@@ -4,7 +4,8 @@
 @import "tailwindcss/preflight.css" layer(base);
 @import "tailwindcss/utilities.css" layer(utilities);
 /* @import "primereact/resources/themes/saga-blue/theme.css" layer(primereact); */
-@import "primereact/resources/themes/lara-light-teal/theme.css";
+@import  'primereact/resources/themes/soho-light/theme.css' layer(primereact);
+/* @import "primereact/resources/themes/lara-light-teal/theme.css" layer(primereact); */
 @import "primeicons/primeicons.css";
 
 :root {
@@ -30,4 +31,8 @@ body {
   background: var(--foreground);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+.p-highlight {
+  
 }

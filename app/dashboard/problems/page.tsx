@@ -264,7 +264,8 @@ export default function Problems() {
           stripedRows
           showGridlines
           size="small"
-          className="p-datatable-problems"
+          style={{ width: "100%" }}
+          className="bg-gray-100"
         >
           <Column
             align={"center"}

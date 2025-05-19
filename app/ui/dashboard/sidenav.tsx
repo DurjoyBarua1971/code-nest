@@ -68,7 +68,8 @@ export default function FullScreenDemo() {
   ];
 
   const userName = user?.user_metadata?.full_name || user?.email || "User";
-  const userAvatar = user?.user_metadata?.avatar_url || "https://www.gravatar.com/avatar/05dfd4b41340d09cae045235eb0893c3?d=mp";
+  // const userAvatar = user?.user_metadata?.avatar_url || "https://www.gravatar.com/avatar/05dfd4b41340d09cae045235eb0893c3?d=mp";
+  const userAvatar = "https://www.gravatar.com/avatar/05dfd4b41340d09cae045235eb0893c3?d=mp";
 
   console.log("User name:", userName);
   console.log("User avatar:", userAvatar);
@@ -96,6 +97,7 @@ export default function FullScreenDemo() {
       <style>{`
         .p-menu {
           border: none;
+          background: none;
         }
         .p-sidebar .card {     
           display: flex;
