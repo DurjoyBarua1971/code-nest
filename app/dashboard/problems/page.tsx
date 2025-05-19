@@ -11,7 +11,8 @@ import { FilterMatchMode } from "primereact/api";
 import { useRouter } from "next/navigation";
 import { Toast } from "primereact/toast";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
-import initialProblems from "@/app/data/problems.json";
+import axios from "axios";
+import { api } from "@/app/lib/api";
 
 interface Problem {
   id: string;
@@ -39,19 +40,19 @@ export default function Problems() {
   const toast = useRef<Toast>(null);
 
   useEffect(() => {
-    const fetchProblems = () => {
+    const fetchProblems = async () => {
       setLoading(true);
       try {
-        const localProblems = localStorage.getItem("problems");
-        if (localProblems) {
-          setProblems(JSON.parse(localProblems));
-        } else {
-          setProblems(initialProblems as Problem[]);
-          localStorage.setItem("problems", JSON.stringify(initialProblems));
-        }
+        const response = await api.get("/problems");
+        setProblems(response.data);
       } catch (error) {
         console.error("Error fetching problems:", error);
-        setProblems(initialProblems as Problem[]);
+        toast.current?.show({
+          severity: "error",
+          summary: "Error",
+          detail: "Failed to load problems",
+          life: 3000,
+        });
       } finally {
         setLoading(false);
       }
@@ -63,14 +64,12 @@ export default function Problems() {
   const onGlobalFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setGlobalFilterValue(value);
-
     setFilters({
       global: { value, matchMode: FilterMatchMode.CONTAINS },
     });
   };
 
   const navigateToEdit = (problem: Problem) => {
-    localStorage.setItem("editProblem", JSON.stringify(problem));
     router.push(`/dashboard/create-problem?edit=true&id=${problem.id}`);
   };
 
@@ -85,22 +84,16 @@ export default function Problems() {
     });
   };
 
-  const deleteProblem = (id: string) => {
+  const deleteProblem = async (id: string) => {
     try {
-      const localProblems = localStorage.getItem("problems");
-      if (localProblems) {
-        const problemsArray = JSON.parse(localProblems) as Problem[];
-        const updatedProblems = problemsArray.filter((p) => p.id !== id);
-        localStorage.setItem("problems", JSON.stringify(updatedProblems));
-        setProblems(updatedProblems);
-
-        toast.current?.show({
-          severity: "success",
-          summary: "Success",
-          detail: "Problem deleted successfully",
-          life: 3000,
-        });
-      }
+      await api.delete(`/problems/${id}`);
+      setProblems(problems.filter((p) => p.id !== id));
+      toast.current?.show({
+        severity: "success",
+        summary: "Success",
+        detail: "Problem deleted successfully",
+        life: 3000,
+      });
     } catch (error) {
       console.error("Error deleting problem:", error);
       toast.current?.show({
@@ -238,6 +231,7 @@ export default function Problems() {
           </h1>
           <p className="text-gray-600 mb-6 text-lg">
             Browse, search, and manage all available coding problems
+
           </p>
         </div>
         <Button

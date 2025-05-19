@@ -9,6 +9,8 @@ import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useRef } from "react";
+import axios from "axios";
+import { api } from "@/app/lib/api";
 
 interface ProblemFormData {
   id?: string;
@@ -42,53 +44,27 @@ export default function CreateProblem() {
   ];
 
   useEffect(() => {
-    // Check if we're in edit mode
     const editParam = searchParams?.get("edit");
     const problemId = searchParams?.get("id");
 
     if (editParam === "true" && problemId) {
       setIsEditMode(true);
-
-      try {
-        // Try to get the problem from localStorage
-        const editProblemJson = localStorage.getItem("editProblem");
-        const allProblemsJson = localStorage.getItem("problems");
-
-        if (editProblemJson) {
-          // If we have the specific problem stored, use it
-          const editProblem = JSON.parse(editProblemJson);
-          setFormData(editProblem);
-          // Clean up the stored problem
-          localStorage.removeItem("editProblem");
-        } else if (allProblemsJson) {
-          // Otherwise find it in all problems
-          const allProblems = JSON.parse(allProblemsJson);
-          const problemToEdit = allProblems.find(
-            (p: any) => p.id === problemId
-          );
-
-          if (problemToEdit) {
-            setFormData(problemToEdit);
-          } else {
-            // Problem not found
-            toast.current?.show({
-              severity: "error",
-              summary: "Error",
-              detail: "Problem not found",
-              life: 3000,
-            });
-            router.push("/dashboard/problems");
-          }
+      const fetchProblem = async () => {
+        try {
+          const response = await api.get(`/problems/${problemId}`);
+          setFormData(response.data);
+        } catch (error) {
+          console.error("Error loading problem for editing:", error);
+          toast.current?.show({
+            severity: "error",
+            summary: "Error",
+            detail: "Failed to load problem data",
+            life: 3000,
+          });
+          router.push("/dashboard/problems");
         }
-      } catch (error) {
-        console.error("Error loading problem for editing:", error);
-        toast.current?.show({
-          severity: "error",
-          summary: "Error",
-          detail: "Failed to load problem data",
-          life: 3000,
-        });
-      }
+      };
+      fetchProblem();
     }
   }, [searchParams, router]);
 
@@ -123,48 +99,24 @@ export default function CreateProblem() {
     setLoading(true);
 
     try {
-      // Get existing problems from localStorage
-      const existingProblemsJson = localStorage.getItem("problems");
-      const existingProblems = existingProblemsJson
-        ? JSON.parse(existingProblemsJson)
-        : [];
+      const problemData = {
+        ...formData,
+        createdAt: isEditMode ? formData.createdAt : new Date().toISOString(),
+      };
 
-      if (isEditMode && formData.id) {
-        // Update existing problem
-        const updatedProblems = existingProblems.map((p: any) =>
-          p.id === formData.id ? { ...formData } : p
-        );
-        localStorage.setItem("problems", JSON.stringify(updatedProblems));
-
-        toast.current?.show({
-          severity: "success",
-          summary: "Success",
-          detail: "Problem updated successfully",
-          life: 3000,
-        });
+      if (isEditMode) {
+        await api.put(`/problems/${formData.id}`, problemData);
       } else {
-        // Create new problem
-        const newProblemData = {
-          id: Date.now().toString(),
-          ...formData,
-          createdAt: new Date().toISOString(),
-        };
-
-        // Add new problem to the array
-        const updatedProblems = [newProblemData, ...existingProblems];
-
-        // Save back to localStorage
-        localStorage.setItem("problems", JSON.stringify(updatedProblems));
-
-        toast.current?.show({
-          severity: "success",
-          summary: "Success",
-          detail: "Problem created successfully",
-          life: 3000,
-        });
+        await api.post(`/problems`, problemData);
       }
 
-      // Redirect to problems page after short delay
+      toast.current?.show({
+        severity: "success",
+        summary: "Success",
+        detail: isEditMode ? "Problem updated successfully" : "Problem created successfully",
+        life: 3000,
+      });
+
       setTimeout(() => {
         router.push("/dashboard/problems");
       }, 1500);
