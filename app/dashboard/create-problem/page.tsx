@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useRef } from "react";
+import { useForm, Controller } from "react-hook-form";
 import { Card } from "primereact/card";
 import { InputText } from "primereact/inputtext";
 import { InputTextarea } from "primereact/inputtextarea";
@@ -8,8 +9,8 @@ import { Dropdown } from "primereact/dropdown";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useRef } from "react";
 import { api } from "@/app/lib/api";
+import { classNames } from "primereact/utils";
 
 interface ProblemFormData {
   id?: string;
@@ -22,19 +23,22 @@ interface ProblemFormData {
 }
 
 export default function CreateProblem() {
-  const [formData, setFormData] = useState<ProblemFormData>({
-    title: "",
-    description: "",
-    resourceLink: "",
-    practiceLink: "",
-    difficulty: "",
-  });
-
-  const [loading, setLoading] = useState(false);
-  const [isEditMode, setIsEditMode] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
   const toast = useRef<Toast>(null);
+  const isEditMode = searchParams?.get("edit") === "true";
+  const problemId = searchParams?.get("id");
+
+  const { control, handleSubmit, setValue, getValues, formState: { errors, isSubmitting } } = useForm<ProblemFormData>({
+    defaultValues: {
+      title: "",
+      description: "",
+      resourceLink: "",
+      practiceLink: "",
+      difficulty: "",
+    },
+    mode: "onChange",
+  });
 
   const difficulties = [
     { name: "Easy", value: "Easy" },
@@ -42,16 +46,19 @@ export default function CreateProblem() {
     { name: "Hard", value: "Hard" },
   ];
 
-  useEffect(() => {
-    const editParam = searchParams?.get("edit");
-    const problemId = searchParams?.get("id");
+  // URL validation regex
+  const urlPattern = /^(https?:\/\/)?([\w-]+(\.[\w-]+)+)(\/[\w-./?%&=]*)?$/i;
 
-    if (editParam === "true" && problemId) {
-      setIsEditMode(true);
+  useEffect(() => {
+    if (isEditMode && problemId) {
       const fetchProblem = async () => {
         try {
           const response = await api.get(`/problems/${problemId}`);
-          setFormData(response.data);
+          const problem = response.data;
+          // Set form values for editing
+          Object.keys(problem).forEach((key) => {
+            setValue(key as keyof ProblemFormData, problem[key]);
+          });
         } catch (error) {
           console.error("Error loading problem for editing:", error);
           toast.current?.show({
@@ -65,46 +72,17 @@ export default function CreateProblem() {
       };
       fetchProblem();
     }
-  }, [searchParams, router]);
+  }, [isEditMode, problemId, router, setValue]);
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
-
-  const handleDropdownChange = (e: { value: string }) => {
-    setFormData({
-      ...formData,
-      difficulty: e.value,
-    });
-  };
-
-  const saveProblem = async () => {
-    if (!validateForm()) {
-      toast.current?.show({
-        severity: "error",
-        summary: "Validation Error",
-        detail: "Please fill all the required fields",
-        life: 3000,
-      });
-      return;
-    }
-
-    setLoading(true);
-
+  const onSubmit = async (data: ProblemFormData) => {
     try {
       const problemData = {
-        ...formData,
-        createdAt: isEditMode ? formData.createdAt : new Date().toISOString(),
+        ...data,
+        createdAt: isEditMode ? data.createdAt : new Date().toISOString(),
       };
 
       if (isEditMode) {
-        await api.put(`/problems/${formData.id}`, problemData);
+        await api.put(`/problems/${data.id}`, problemData);
       } else {
         await api.post(`/problems`, problemData);
       }
@@ -127,22 +105,11 @@ export default function CreateProblem() {
         detail: "Failed to save problem. Please try again.",
         life: 3000,
       });
-    } finally {
-      setLoading(false);
     }
   };
 
-  const validateForm = () => {
-    return (
-      formData.title.trim() !== "" &&
-      formData.description.trim() !== "" &&
-      formData.resourceLink.trim() !== "" &&
-      formData.difficulty !== ""
-    );
-  };
-
   const viewJSONPreview = () => {
-    const jsonPreview = JSON.stringify(formData, null, 2);
+    const jsonPreview = JSON.stringify(getValues(), null, 2);
     toast.current?.show({
       severity: "info",
       summary: "JSON Preview",
@@ -157,9 +124,7 @@ export default function CreateProblem() {
       <div className="mb-6">
         <h1 className="text-4xl font-bold text-gray-800 mb-2 flex items-center">
           <i
-            className={`pi ${
-              isEditMode ? "pi-pencil" : "pi-plus-circle"
-            } mr-3 text-blue-500`}
+            className={`pi ${isEditMode ? "pi-pencil" : "pi-plus-circle"} mr-3 text-blue-500`}
           ></i>
           {isEditMode ? "Edit Problem" : "Create New Problem"}
         </h1>
@@ -171,7 +136,7 @@ export default function CreateProblem() {
       </div>
 
       <Card className="shadow-xl border border-gray-200 rounded-lg">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="p-field col-span-2">
             <label
               htmlFor="title"
@@ -179,15 +144,20 @@ export default function CreateProblem() {
             >
               Problem Title*
             </label>
-            <InputText
-              id="title"
+            <Controller
               name="title"
-              value={formData.title}
-              onChange={handleInputChange}
-              placeholder="Enter a descriptive title"
-              className="w-full p-3"
-              required
+              control={control}
+              rules={{ required: "Title is required", minLength: { value: 3, message: "Title must be at least 3 characters" } }}
+              render={({ field }) => (
+                <InputText
+                  id="title"
+                  {...field}
+                  placeholder="Enter a descriptive title"
+                  className={classNames("w-full p-3", { "p-invalid": errors.title })}
+                />
+              )}
             />
+            {errors.title && <small className="p-error">{errors.title.message}</small>}
           </div>
 
           <div className="p-field col-span-2">
@@ -197,16 +167,21 @@ export default function CreateProblem() {
             >
               Problem Description*
             </label>
-            <InputTextarea
-              id="description"
+            <Controller
               name="description"
-              value={formData.description}
-              onChange={handleInputChange}
-              rows={5}
-              placeholder="Describe the problem in detail"
-              className="w-full"
-              required
+              control={control}
+              rules={{ required: "Description is required", minLength: { value: 10, message: "Description must be at least 10 characters" } }}
+              render={({ field }) => (
+                <InputTextarea
+                  id="description"
+                  {...field}
+                  rows={5}
+                  placeholder="Describe the problem in detail"
+                  className={classNames("w-full", { "p-invalid": errors.description })}
+                />
+              )}
             />
+            {errors.description && <small className="p-error">{errors.description.message}</small>}
           </div>
 
           <div className="p-field">
@@ -216,15 +191,23 @@ export default function CreateProblem() {
             >
               Resource Link*
             </label>
-            <InputText
-              id="resourceLink"
+            <Controller
               name="resourceLink"
-              value={formData.resourceLink}
-              onChange={handleInputChange}
-              placeholder="URL to learning resource"
-              className="w-full"
-              required
+              control={control}
+              rules={{
+                required: "Resource link is required",
+                pattern: { value: urlPattern, message: "Please enter a valid URL" },
+              }}
+              render={({ field }) => (
+                <InputText
+                  id="resourceLink"
+                  {...field}
+                  placeholder="URL to learning resource"
+                  className={classNames("w-full", { "p-invalid": errors.resourceLink })}
+                />
+              )}
             />
+            {errors.resourceLink && <small className="p-error">{errors.resourceLink.message}</small>}
           </div>
 
           <div className="p-field">
@@ -234,14 +217,22 @@ export default function CreateProblem() {
             >
               Practice Link
             </label>
-            <InputText
-              id="practiceLink"
+            <Controller
               name="practiceLink"
-              value={formData.practiceLink}
-              onChange={handleInputChange}
-              placeholder="URL to practice this problem"
-              className="w-full"
+              control={control}
+              rules={{
+                pattern: { value: urlPattern, message: "Please enter a valid URL" },
+              }}
+              render={({ field }) => (
+                <InputText
+                  id="practiceLink"
+                  {...field}
+                  placeholder="URL to practice this problem"
+                  className={classNames("w-full", { "p-invalid": errors.practiceLink })}
+                />
+              )}
             />
+            {errors.practiceLink && <small className="p-error">{errors.practiceLink.message}</small>}
           </div>
 
           <div className="p-field">
@@ -251,50 +242,50 @@ export default function CreateProblem() {
             >
               Difficulty Level*
             </label>
-            <Dropdown
-              id="difficulty"
+            <Controller
               name="difficulty"
-              value={formData.difficulty}
-              options={difficulties}
-              onChange={handleDropdownChange}
-              optionLabel="name"
-              placeholder="Select Difficulty"
-              className="w-full"
-              required
+              control={control}
+              rules={{ required: "Difficulty is required" }}
+              render={({ field }) => (
+                <Dropdown
+                  id="difficulty"
+                  {...field}
+                  options={difficulties}
+                  optionLabel="name"
+                  placeholder="Select Difficulty"
+                  className={classNames("w-full", { "p-invalid": errors.difficulty })}
+                  onChange={(e) => field.onChange(e.value)}
+                />
+              )}
             />
+            {errors.difficulty && <small className="p-error">{errors.difficulty.message}</small>}
           </div>
 
           <div className="col-span-2 flex flex-wrap justify-end gap-3 mt-6">
             <Button
+              type="button"
               label="Preview JSON"
               icon="pi pi-code"
               className="p-button-secondary p-button-outlined"
               onClick={viewJSONPreview}
             />
             <Button
+              type="button"
               label="Cancel"
               icon="pi pi-times"
               className="p-button-outlined p-button-danger"
               onClick={() => router.push("/dashboard/problems")}
             />
             <Button
-              label={
-                loading
-                  ? isEditMode
-                    ? "Updating..."
-                    : "Saving..."
-                  : isEditMode
-                  ? "Update Problem"
-                  : "Save Problem"
-              }
+              type="submit"
+              label={isSubmitting ? (isEditMode ? "Updating..." : "Saving...") : (isEditMode ? "Update Problem" : "Save Problem")}
               icon={isEditMode ? "pi pi-check" : "pi pi-save"}
-              onClick={saveProblem}
-              loading={loading}
-              disabled={loading}
+              loading={isSubmitting}
+              disabled={isSubmitting}
               className="p-button-raised shadow-md hover:shadow-lg transition-shadow duration-300"
             />
           </div>
-        </div>
+        </form>
       </Card>
     </div>
   );
