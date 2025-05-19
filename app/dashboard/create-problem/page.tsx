@@ -9,7 +9,6 @@ import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useRef } from "react";
-import axios from "axios";
 import { api } from "@/app/lib/api";
 
 interface ProblemFormData {

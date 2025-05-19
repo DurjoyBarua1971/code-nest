@@ -4,7 +4,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get('code');
-  const next = searchParams.get('next') ?? '/dashboard'; // Default to /dashboard
+  const next = searchParams.get('next') ?? '/dashboard';
 
   if (code) {
     const supabase = await createClientForServer();
@@ -22,6 +22,5 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  // Redirect to login page with an error
   return NextResponse.redirect(`${origin}/?error=Authentication failed`);
 }

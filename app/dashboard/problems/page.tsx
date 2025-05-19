@@ -11,7 +11,6 @@ import { FilterMatchMode } from "primereact/api";
 import { useRouter } from "next/navigation";
 import { Toast } from "primereact/toast";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
-import axios from "axios";
 import { api } from "@/app/lib/api";
 
 interface Problem {
@@ -231,7 +230,6 @@ export default function Problems() {
           </h1>
           <p className="text-gray-600 mb-6 text-lg">
             Browse, search, and manage all available coding problems
-
           </p>
         </div>
         <Button
