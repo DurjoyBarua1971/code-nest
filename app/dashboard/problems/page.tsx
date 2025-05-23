@@ -7,11 +7,28 @@ import { Button } from "primereact/button";
 import { Tag } from "primereact/tag";
 import { Card } from "primereact/card";
 import { InputText } from "primereact/inputtext";
-import { FilterMatchMode } from "primereact/api";
 import { useRouter } from "next/navigation";
 import { Toast } from "primereact/toast";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
+import { Paginator } from "primereact/paginator";
 import { api } from "@/app/lib/api";
+
+// Custom debounce hook
+function useDebounce<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+}
 
 interface Problem {
   id: string;
@@ -26,15 +43,11 @@ interface Problem {
 export default function Problems() {
   const [problems, setProblems] = useState<Problem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filters, setFilters] = useState<{
-    global: {
-      value: string | null;
-      matchMode: typeof FilterMatchMode.CONTAINS;
-    };
-  }>({
-    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-  });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [totalItems, setTotalItems] = useState(0);
   const [globalFilterValue, setGlobalFilterValue] = useState("");
+  const debouncedSearchValue = useDebounce(globalFilterValue, 500);
   const router = useRouter();
   const toast = useRef<Toast>(null);
 
@@ -42,8 +55,23 @@ export default function Problems() {
     const fetchProblems = async () => {
       setLoading(true);
       try {
-        const response = await api.get("/problems");
+        const params: { _page: number; _limit: number; title_like?: string } = {
+          _page: currentPage,
+          _limit: itemsPerPage,
+        };
+        if (debouncedSearchValue) {
+          params.title_like = debouncedSearchValue;
+        }
+        const response = await api.get("/problems", {
+          params,
+          headers: {
+            Accept: "application/json",
+          },
+        });
+        console.log(response);
         setProblems(response.data);
+        const totalCount = parseInt(response.headers["x-total-count"], 10);
+        setTotalItems(totalCount);
       } catch (error) {
         console.error("Error fetching problems:", error);
         toast.current?.show({
@@ -58,14 +86,10 @@ export default function Problems() {
     };
 
     fetchProblems();
-  }, []);
+  }, [currentPage, itemsPerPage, debouncedSearchValue]);
 
   const onGlobalFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setGlobalFilterValue(value);
-    setFilters({
-      global: { value, matchMode: FilterMatchMode.CONTAINS },
-    });
+    setGlobalFilterValue(e.target.value);
   };
 
   const navigateToEdit = (problem: Problem) => {
@@ -111,7 +135,7 @@ export default function Problems() {
         <div className="flex items-center">
           <div>
             <InputText
-              size={15}
+              size={18}
               value={globalFilterValue}
               onChange={onGlobalFilterChange}
               placeholder="Search problems"
@@ -243,14 +267,8 @@ export default function Problems() {
       <Card className="shadow-xl border border-gray-200 rounded-lg">
         <DataTable
           value={problems}
-          paginator
-          rows={10}
-          rowsPerPageOptions={[5, 10, 25]}
           dataKey="id"
-          filters={filters}
-          filterDisplay="menu"
           loading={loading}
-          globalFilterFields={["title", "description", "difficulty"]}
           header={header}
           emptyMessage="No problems found"
           stripedRows
@@ -300,10 +318,22 @@ export default function Problems() {
             header="Actions"
           />
         </DataTable>
+        <Paginator
+          first={(currentPage - 1) * itemsPerPage}
+          rows={itemsPerPage}
+          totalRecords={totalItems}
+          rowsPerPageOptions={[5, 10, 25]}
+          onPageChange={(e) => {
+            setCurrentPage(e.page + 1);
+            setItemsPerPage(e.rows);
+          }}
+          template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
+          className="mt-4"
+        />
       </Card>
 
       <div className="mt-8 text-center text-gray-500">
-        <p>Total Problems: {problems.length}</p>
+        <p>Total Problems: {totalItems}</p>
       </div>
     </div>
   );

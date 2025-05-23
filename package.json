@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "server": "json-server app/data/db.json  --port 4000"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",
@@ -15,6 +16,7 @@
     "@supabase/supabase-js": "^2.49.4",
     "axios": "^1.9.0",
     "chart.js": "^4.4.9",
+    "json-server": "0.17.3",
     "next": "15.3.2",
     "primeflex": "^4.0.0",
     "primeicons": "^7.0.0",
@@ -29,7 +31,6 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "json-server": "1.0.0-beta.3",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
