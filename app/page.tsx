@@ -101,7 +101,7 @@ export default function AuthPage() {
           <img
             src={isLoginMode ? "/login.jpg" : "/signup.jpeg"}
             alt={isLoginMode ? "Login Illustration" : "Signup Illustration"}
-            className="w-[444px] object-cover"
+            className="w-[444px] h-[425px] object-cover"
           />
         </div>
 

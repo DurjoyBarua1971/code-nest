@@ -13,23 +13,6 @@ import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { Paginator } from "primereact/paginator";
 import { api } from "@/app/lib/api";
 
-// Custom debounce hook
-function useDebounce<T>(value: T, delay: number): T {
-  const [debouncedValue, setDebouncedValue] = useState<T>(value);
-
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedValue(value);
-    }, delay);
-
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [value, delay]);
-
-  return debouncedValue;
-}
-
 interface Problem {
   id: string;
   title: string;
@@ -47,7 +30,9 @@ export default function Problems() {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [totalItems, setTotalItems] = useState(0);
   const [globalFilterValue, setGlobalFilterValue] = useState("");
-  const debouncedSearchValue = useDebounce(globalFilterValue, 500);
+  const [searchValue, setSearchValue] = useState(""); // Separate state for actual search
+  const [difficultyFilter, setDifficultyFilter] = useState<string>("");
+  const [showFilterDropdown, setShowFilterDropdown] = useState(false);
   const router = useRouter();
   const toast = useRef<Toast>(null);
 
@@ -55,12 +40,20 @@ export default function Problems() {
     const fetchProblems = async () => {
       setLoading(true);
       try {
-        const params: { _page: number; _limit: number; title_like?: string } = {
+        const params: {
+          _page: number;
+          _limit: number;
+          title_like?: string;
+          difficulty?: string;
+        } = {
           _page: currentPage,
           _limit: itemsPerPage,
         };
-        if (debouncedSearchValue) {
-          params.title_like = debouncedSearchValue;
+        if (searchValue) {
+          params.title_like = searchValue;
+        }
+        if (difficultyFilter) {
+          params.difficulty = difficultyFilter;
         }
         const response = await api.get("/problems", {
           params,
@@ -86,10 +79,34 @@ export default function Problems() {
     };
 
     fetchProblems();
-  }, [currentPage, itemsPerPage, debouncedSearchValue]);
+  }, [currentPage, itemsPerPage, searchValue, difficultyFilter]);
 
   const onGlobalFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setGlobalFilterValue(e.target.value);
+  };
+
+  const handleSearch = () => {
+    setSearchValue(globalFilterValue);
+    setCurrentPage(1);
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
+  };
+
+  const onResetFilters = () => {
+    setGlobalFilterValue("");
+    setSearchValue(""); // Clear both input and search values
+    setDifficultyFilter("");
+    setShowFilterDropdown(false);
+  };
+
+  const handleDifficultyFilter = (difficulty: string) => {
+    setDifficultyFilter(difficulty);
+    setShowFilterDropdown(false);
+    setCurrentPage(1);
   };
 
   const navigateToEdit = (problem: Problem) => {
@@ -132,17 +149,78 @@ export default function Problems() {
     return (
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-bold px-4">All Problems</h2>
-        <div className="flex items-center">
-          <div>
-            <InputText
-              size={18}
-              value={globalFilterValue}
-              onChange={onGlobalFilterChange}
-              placeholder="Search problems"
+        <div className="flex items-center space-x-4!">
+          <div className="relative">
+            <Button
+              type="button"
+              icon="pi pi-filter"
+              label={
+                difficultyFilter ? `Filter: ${difficultyFilter}` : "Filter"
+              }
+              outlined
+              size="small"
+              onClick={() => setShowFilterDropdown(!showFilterDropdown)}
+              className={`p-button-secondary ${
+                difficultyFilter ? "p-button-info" : ""
+              }`}
             />
+            {showFilterDropdown && (
+              <div className="absolute top-full mt-1 left-0 bg-white border border-gray-200 rounded-md shadow-lg z-10 min-w-[120px]">
+                <div className="py-1">
+                  <button
+                    className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+                    onClick={() => handleDifficultyFilter("Easy")}
+                  >
+                    Easy
+                  </button>
+                  <button
+                    className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+                    onClick={() => handleDifficultyFilter("Medium")}
+                  >
+                    Medium
+                  </button>
+                  <button
+                    className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+                    onClick={() => handleDifficultyFilter("Hard")}
+                  >
+                    Hard
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
-          <div className="absolute right-5 top-6 bg-white">
-            <i className="pi pi-search" />
+          <Button
+            type="button"
+            icon="pi pi-refresh"
+            label="Reset"
+            outlined
+            size="small"
+            onClick={onResetFilters}
+            className="p-button-warning"
+          />
+          <div className="flex items-center space-x-2">
+            <div className="relative">
+              <InputText
+                size={18}
+                value={globalFilterValue}
+                onChange={onGlobalFilterChange}
+                onKeyPress={handleKeyPress}
+                placeholder="Search problems"
+                className="pl-8!"
+              />
+              <div className="absolute left-2 top-1/2 transform -translate-y-1/2">
+                <i className="pi pi-search" />
+              </div>
+            </div>
+            <Button
+              type="button"
+              icon="pi pi-search"
+              onClick={handleSearch}
+              size="small"
+              className="p-button-primary"
+              tooltip="Search"
+              tooltipOptions={{ position: "bottom" }}
+            />
           </div>
         </div>
       </div>
