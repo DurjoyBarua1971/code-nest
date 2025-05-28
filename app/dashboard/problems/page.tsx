@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, use } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Button } from "primereact/button";
@@ -12,6 +12,22 @@ import { Toast } from "primereact/toast";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { Paginator } from "primereact/paginator";
 import { api } from "@/app/lib/api";
+
+function useDebounce<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+}
 
 interface Problem {
   id: string;
@@ -30,11 +46,16 @@ export default function Problems() {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [totalItems, setTotalItems] = useState(0);
   const [globalFilterValue, setGlobalFilterValue] = useState("");
-  const [searchValue, setSearchValue] = useState(""); // Separate state for actual search
+  const [searchValue, setSearchValue] = useState("");
   const [difficultyFilter, setDifficultyFilter] = useState<string>("");
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
+  const debouncedSearchValue = useDebounce(globalFilterValue, 500);
   const router = useRouter();
   const toast = useRef<Toast>(null);
+
+  useEffect(() => {
+    setSearchValue(debouncedSearchValue);
+  }, [debouncedSearchValue]);
 
   useEffect(() => {
     const fetchProblems = async () => {
@@ -61,7 +82,6 @@ export default function Problems() {
             Accept: "application/json",
           },
         });
-        console.log(response);
         setProblems(response.data);
         const totalCount = parseInt(response.headers["x-total-count"], 10);
         setTotalItems(totalCount);
@@ -85,20 +105,9 @@ export default function Problems() {
     setGlobalFilterValue(e.target.value);
   };
 
-  const handleSearch = () => {
-    setSearchValue(globalFilterValue);
-    setCurrentPage(1);
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      handleSearch();
-    }
-  };
-
   const onResetFilters = () => {
     setGlobalFilterValue("");
-    setSearchValue(""); // Clear both input and search values
+    setSearchValue("");
     setDifficultyFilter("");
     setShowFilterDropdown(false);
   };
@@ -198,29 +207,17 @@ export default function Problems() {
             onClick={onResetFilters}
             className="p-button-warning"
           />
-          <div className="flex items-center space-x-2">
-            <div className="relative">
-              <InputText
-                size={18}
-                value={globalFilterValue}
-                onChange={onGlobalFilterChange}
-                onKeyPress={handleKeyPress}
-                placeholder="Search problems"
-                className="pl-8!"
-              />
-              <div className="absolute left-2 top-1/2 transform -translate-y-1/2">
-                <i className="pi pi-search" />
-              </div>
-            </div>
-            <Button
-              type="button"
-              icon="pi pi-search"
-              onClick={handleSearch}
-              size="small"
-              className="p-button-primary"
-              tooltip="Search"
-              tooltipOptions={{ position: "bottom" }}
+          <div className="relative">
+            <InputText
+              size={18}
+              value={globalFilterValue}
+              onChange={onGlobalFilterChange}
+              placeholder="Search problems"
+              className="pl-8!"
             />
+            <div className="absolute left-2 top-1/2 transform -translate-y-1/2">
+              <i className="pi pi-search" />
+            </div>
           </div>
         </div>
       </div>

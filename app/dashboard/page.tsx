@@ -4,130 +4,76 @@ import React, { useState, useEffect } from "react";
 import { Chart } from "primereact/chart";
 import { Card } from "primereact/card";
 import { Divider } from "primereact/divider";
+import { ProgressSpinner } from "primereact/progressspinner";
+import { api } from "../lib/api";
+
+type Stat = {
+  label: string;
+  value: string | number;
+  icon: string;
+  color: string;
+};
 
 export default function Dashboard() {
   const [barData, setBarData] = useState({});
   const [barOptions, setBarOptions] = useState({});
   const [doughnutData, setDoughnutData] = useState({});
   const [lineData, setLineData] = useState({});
+  const [stats, setStats] = useState<Stat[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    setBarData({
-      labels: ["Easy", "Medium", "Hard"],
-      datasets: [
-        {
-          label: "Problems by Difficulty",
-          data: [140, 300, 250],
-          backgroundColor: [
-            "rgba(75, 192, 192, 0.7)",
-            "rgba(255, 159, 64, 0.7)",
-            "rgba(255, 99, 132, 0.7)",
-          ],
-          borderColor: [
-            "rgb(75, 192, 192)",
-            "rgb(255, 159, 64)",
-            "rgb(255, 99, 132)",
-          ],
-          borderWidth: 1,
-        },
-      ],
-    });
-    setBarOptions({
-      plugins: {
-        legend: { display: true, position: "top" },
-      },
-      scales: {
-        y: {
-          beginAtZero: true,
-        },
-      },
-    });
-    setBarOptions({
-      plugins: {
-        legend: { display: false },
-      },
-      scales: {
-        y: { beginAtZero: true },
-      },
-    });
-
-    setDoughnutData({
-      labels: [
-        "Attempted & Solved",
-        "Attempted & Unsolved",
-        "Not Yet Attempted",
-      ],
-      datasets: [
-        {
-          data: [4500, 2400, 3100],
-          backgroundColor: [
-            "rgba(40, 167, 69, 0.7)",
-            "rgba(255, 193, 7, 0.7)",
-            "rgba(108, 117, 125, 0.7)",
-          ],
-          borderColor: [
-            "rgb(40, 167, 69)",
-            "rgb(255, 193, 7)",
-            "rgb(108, 117, 125)",
-          ],
-          borderWidth: 1,
-        },
-      ],
-    });
-
-    setLineData({
-      labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-      datasets: [
-        {
-          label: "New Submissions This Week",
-          data: [250, 400, 320, 500, 610, 450, 700],
-          fill: true,
-          backgroundColor: "rgba(54, 162, 235, 0.2)",
-          borderColor: "rgb(54, 162, 235)",
-          tension: 0.4,
-        },
-      ],
-    });
+    fetchDashboardData();
   }, []);
 
-  const stats = [
-    {
-      label: "Total Users",
-      value: "12,545",
-      icon: "pi pi-users",
-      color: "bg-blue-100 text-blue-600",
-    },
-    {
-      label: "Active Users (Today)",
-      value: "1,830",
-      icon: "pi pi-user-plus",
-      color: "bg-teal-100 text-teal-600",
-    },
-    {
-      label: "Total Problems",
-      value: "690",
-      icon: "pi pi-book",
-      color: "bg-indigo-100 text-indigo-600",
-    },
-    {
-      label: "Total Submissions",
-      value: "150,320",
-      icon: "pi pi-code",
-      color: "bg-green-100 text-green-600",
-    },
-    {
-      label: "Avg. Success Rate",
-      value: "58%",
-      icon: "pi pi-check-circle",
-      color: "bg-orange-100 text-orange-600",
-    },
-    {
-      label: "New Problems (Month)",
-      value: "25",
-      icon: "pi pi-plus-circle",
-      color: "bg-purple-100 text-purple-600",
-    },
-  ];
+  const fetchDashboardData = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get("/dashboard", {
+        headers: {
+          Accept: "application/json",
+        },
+      });
+
+      const { stats, chartData } = response.data;
+
+      setStats(stats);
+      setBarData(chartData.problemDifficulty);
+      setDoughnutData(chartData.userInteraction);
+      setLineData(chartData.weeklySubmissions);
+
+      setBarOptions({
+        plugins: {
+          legend: { display: false },
+        },
+        scales: {
+          y: { beginAtZero: true },
+        },
+      });
+    } catch (err) {
+      setError("Failed to fetch dashboard data");
+      console.error("Dashboard data fetch error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <ProgressSpinner />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="text-red-500 text-xl">{error}</div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-6 p-8 min-h-screen bg-gray-100">
