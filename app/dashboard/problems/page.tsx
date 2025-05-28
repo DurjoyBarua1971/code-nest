@@ -7,7 +7,7 @@ import { Toast } from "primereact/toast";
 import { useRouter } from "next/navigation";
 import { api } from "@/app/lib/api";
 import { useDebounce } from "@/app/hooks/useDebounce";
-import { Problem } from "@/app/lib/types";
+import { Problem, ProblemQueryParams } from "@/app/lib/types";
 import ProblemFilter from "@/app/ui/ProblemFilter";
 import ProblemTable from "@/app/ui/ProblemTable";
 
@@ -34,18 +34,16 @@ export default function Problems() {
     const fetchProblems = async () => {
       setLoading(true);
       try {
-        const params: {
-          _page: number;
-          _limit: number;
-          title_like?: string;
-          difficulty?: string;
-          createdAt_gte?: string;
-          createdAt_lte?: string;
-        } = { _page: currentPage, _limit: itemsPerPage };
+        
+        const params: ProblemQueryParams = {
+          _page: currentPage,
+          _limit: itemsPerPage,
+        };
 
         if (searchValue) {
           params.title_like = searchValue;
         }
+
         if (dateRange?.length === 2 && dateRange[0] && dateRange[1]) {
           const [start, end] = dateRange;
           params.createdAt_gte = start.toISOString();
@@ -53,13 +51,17 @@ export default function Problems() {
         }
 
         if (difficultyFilter) params.difficulty = difficultyFilter;
+
         const response = await api.get("/problems", {
           params,
           headers: { Accept: "application/json" },
         });
-        setProblems(response.data);
+        
+        setProblems(response.data);        
+
         const totalCount = parseInt(response.headers["x-total-count"], 10);
         setTotalItems(totalCount);
+
       } catch (error) {
         console.error("Error fetching problems:", error);
         toast.current?.show({
@@ -79,12 +81,15 @@ export default function Problems() {
 
   const onGlobalFilterChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setGlobalFilterValue(e.target.value);
+  
   const onResetFilters = () => {
     setGlobalFilterValue("");
     setSearchValue("");
     setDifficultyFilter("");
     setDateRange([]);
     setShowFilterDropdown(false);
+    setCurrentPage(1);
+    setItemsPerPage(10);
   };
 
   const handleDifficultyFilter = (difficulty: string) => {

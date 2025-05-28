@@ -12,6 +12,7 @@ import {
   descriptionBodyTemplate,
   difficultyBodyTemplate,
 } from "./ProblemTemplates";
+import { Skeleton } from "primereact/skeleton";
 
 interface ProblemTableProps {
   problems: Problem[];
@@ -32,6 +33,15 @@ export default function ProblemTable({
   itemsPerPage,
   onPageChange,
 }: ProblemTableProps) {
+  if (loading) {
+    return (
+      <div className="space-y-4 p-6">
+        {Array.from({ length: 15 }).map((_, i) => (
+          <Skeleton key={i} height="1rem" width="100%" />
+        ))}
+      </div>
+    );
+  }
   return (
     <div>
       <DataTable

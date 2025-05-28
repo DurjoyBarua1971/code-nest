@@ -7,3 +7,12 @@ export interface Problem {
   difficulty: "Easy" | "Medium" | "Hard";
   createdAt: string;
 }
+
+export type ProblemQueryParams = {
+  _page: number;
+  _limit: number;
+  title_like?: string;
+  difficulty?: string;
+  createdAt_gte?: string;
+  createdAt_lte?: string;
+};
