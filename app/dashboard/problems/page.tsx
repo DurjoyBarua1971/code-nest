@@ -21,6 +21,7 @@ export default function Problems() {
   const [searchValue, setSearchValue] = useState("");
   const [difficultyFilter, setDifficultyFilter] = useState<string>("");
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
+  const [dateRange, setDateRange] = useState<Date[]>([]);
   const debouncedSearchValue = useDebounce(globalFilterValue, 500);
   const router = useRouter();
   const toast = useRef<Toast>(null);
@@ -38,10 +39,19 @@ export default function Problems() {
           _limit: number;
           title_like?: string;
           difficulty?: string;
+          createdAt_gte?: string;
+          createdAt_lte?: string;
         } = { _page: currentPage, _limit: itemsPerPage };
+
         if (searchValue) {
           params.title_like = searchValue;
         }
+        if (dateRange?.length === 2 && dateRange[0] && dateRange[1]) {
+          const [start, end] = dateRange;
+          params.createdAt_gte = start.toISOString();
+          params.createdAt_lte = end.toISOString();
+        }
+
         if (difficultyFilter) params.difficulty = difficultyFilter;
         const response = await api.get("/problems", {
           params,
@@ -62,8 +72,10 @@ export default function Problems() {
         setLoading(false);
       }
     };
-    fetchProblems();
-  }, [currentPage, itemsPerPage, searchValue, difficultyFilter]);
+    if ((dateRange.length === 2 && dateRange[1]) || dateRange.length === 0) {
+      fetchProblems();
+    }
+  }, [currentPage, itemsPerPage, searchValue, difficultyFilter, dateRange]);
 
   const onGlobalFilterChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setGlobalFilterValue(e.target.value);
@@ -71,8 +83,10 @@ export default function Problems() {
     setGlobalFilterValue("");
     setSearchValue("");
     setDifficultyFilter("");
+    setDateRange([]);
     setShowFilterDropdown(false);
   };
+
   const handleDifficultyFilter = (difficulty: string) => {
     setDifficultyFilter(difficulty);
     setShowFilterDropdown(false);
@@ -90,6 +104,8 @@ export default function Problems() {
         onResetFilters={onResetFilters}
         handleDifficultyFilter={handleDifficultyFilter}
         setShowFilterDropdown={setShowFilterDropdown}
+        dateRange={dateRange}
+        setDateRange={setDateRange}
       />
     </div>
   );
