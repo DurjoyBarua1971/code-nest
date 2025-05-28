@@ -55,7 +55,6 @@ export default function CreateProblem() {
         try {
           const response = await api.get(`/problems/${problemId}`);
           const problem = response.data;
-          // Set form values for editing
           Object.keys(problem).forEach((key) => {
             setValue(key as keyof ProblemFormData, problem[key]);
           });

@@ -1,7 +1,7 @@
 {
   "problems": [
     {
-      "title": "Longest ",
+      "title": "Longest Nishi ",
       "description": "Given a string, find the length of the longest substring without repeating characters.",
       "resourceLink": "https://leetcode.com/problems/longest-substring-without-repeating-characters/",
       "practiceLink": "https://leetcode.com/problems/longest-substring-without-repeating-characters/",
@@ -190,7 +190,7 @@
       "createdAt": "2025-05-23T06:46:30.028Z"
     }
   ],
-    "dashboard": {
+  "dashboard": {
     "stats": [
       {
         "label": "Total Users",
@@ -231,11 +231,19 @@
     ],
     "chartData": {
       "problemDifficulty": {
-        "labels": ["Easy", "Medium", "Hard"],
+        "labels": [
+          "Easy",
+          "Medium",
+          "Hard"
+        ],
         "datasets": [
           {
             "label": "Problems by Difficulty",
-            "data": [140, 300, 250],
+            "data": [
+              140,
+              300,
+              250
+            ],
             "backgroundColor": [
               "rgba(75, 192, 192, 0.7)",
               "rgba(255, 159, 64, 0.7)",
@@ -258,7 +266,11 @@
         ],
         "datasets": [
           {
-            "data": [4500, 2400, 3100],
+            "data": [
+              4500,
+              2400,
+              3100
+            ],
             "backgroundColor": [
               "rgba(40, 167, 69, 0.7)",
               "rgba(255, 193, 7, 0.7)",
@@ -274,11 +286,27 @@
         ]
       },
       "weeklySubmissions": {
-        "labels": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+        "labels": [
+          "Mon",
+          "Tue",
+          "Wed",
+          "Thu",
+          "Fri",
+          "Sat",
+          "Sun"
+        ],
         "datasets": [
           {
             "label": "New Submissions This Week",
-            "data": [250, 400, 320, 500, 610, 450, 700],
+            "data": [
+              250,
+              400,
+              320,
+              500,
+              610,
+              450,
+              700
+            ],
             "fill": true,
             "backgroundColor": "rgba(54, 162, 235, 0.2)",
             "borderColor": "rgb(54, 162, 235)",
