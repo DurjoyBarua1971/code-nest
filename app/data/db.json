@@ -1,60 +1,6 @@
 {
   "problems": [
     {
-      "title": "Longest Nishi ",
-      "description": "Given a string, find the length of the longest substring without repeating characters.",
-      "resourceLink": "https://leetcode.com/problems/longest-substring-without-repeating-characters/",
-      "practiceLink": "https://leetcode.com/problems/longest-substring-without-repeating-characters/",
-      "difficulty": "Medium",
-      "id": "3",
-      "createdAt": "2023-05-17T09:00:00Z"
-    },
-    {
-      "id": "4",
-      "title": "Median of Two Sorted Arrays",
-      "description": "Given two sorted arrays nums1 and nums2 of size m and n respectively, return the median of the two sorted arrays.",
-      "resourceLink": "https://leetcode.com/problems/median-of-two-sorted-arrays/",
-      "practiceLink": "https://leetcode.com/problems/median-of-two-sorted-arrays/",
-      "difficulty": "Hard",
-      "createdAt": "2023-05-18T11:45:00Z"
-    },
-    {
-      "id": "5",
-      "title": "Longest Palindromic Substring",
-      "description": "Given a string s, return the longest palindromic substring in s.",
-      "resourceLink": "https://leetcode.com/problems/longest-palindromic-substring/",
-      "practiceLink": "https://leetcode.com/problems/longest-palindromic-substring/",
-      "difficulty": "Medium",
-      "createdAt": "2023-05-19T08:10:00Z"
-    },
-    {
-      "id": "6",
-      "title": "Zigzag Conversion",
-      "description": "Convert a string to a zigzag pattern on a given number of rows.",
-      "resourceLink": "https://leetcode.com/problems/zigzag-conversion/",
-      "practiceLink": "https://leetcode.com/problems/zigzag-conversion/",
-      "difficulty": "Medium",
-      "createdAt": "2023-05-20T13:00:00Z"
-    },
-    {
-      "id": "7",
-      "title": "Reverse Integer",
-      "description": "Given a signed 32-bit integer x, return x with its digits reversed.",
-      "resourceLink": "https://leetcode.com/problems/reverse-integer/",
-      "practiceLink": "https://leetcode.com/problems/reverse-integer/",
-      "difficulty": "Easy",
-      "createdAt": "2023-05-21T07:50:00Z"
-    },
-    {
-      "id": "8",
-      "title": "String to Integer (atoi)",
-      "description": "Implement the myAtoi(string s) function, which converts a string to a 32-bit signed integer.",
-      "resourceLink": "https://leetcode.com/problems/string-to-integer-atoi/",
-      "practiceLink": "https://leetcode.com/problems/string-to-integer-atoi/",
-      "difficulty": "Medium",
-      "createdAt": "2023-05-22T16:30:00Z"
-    },
-    {
       "id": "9",
       "title": "Palindrome Number",
       "description": "Given an integer x, return true if x is palindrome integer.",
@@ -71,15 +17,6 @@
       "practiceLink": "https://leetcode.com/problems/container-with-most-water/",
       "difficulty": "Medium",
       "createdAt": "2023-05-24T18:40:00Z"
-    },
-    {
-      "id": "11",
-      "title": "Roman to Integer",
-      "description": "Convert a roman numeral to an integer.",
-      "resourceLink": "https://leetcode.com/problems/roman-to-integer/",
-      "practiceLink": "https://leetcode.com/problems/roman-to-integer/",
-      "difficulty": "Easy",
-      "createdAt": "2023-05-25T14:15:00Z"
     },
     {
       "id": "12",
@@ -100,15 +37,6 @@
       "createdAt": "2023-05-27T10:30:00Z"
     },
     {
-      "id": "14",
-      "title": "3Sum",
-      "description": "Given an integer array nums, return all the triplets [nums[i], nums[j], nums[k]] such that i != j != k, and nums[i] + nums[j] + nums[k] == 0.",
-      "resourceLink": "https://leetcode.com/problems/3sum/",
-      "practiceLink": "https://leetcode.com/problems/3sum/",
-      "difficulty": "Medium",
-      "createdAt": "2023-05-28T15:00:00Z"
-    },
-    {
       "id": "15",
       "title": "Valid Parentheses",
       "description": "Given a string s containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.",
@@ -116,15 +44,6 @@
       "practiceLink": "https://leetcode.com/problems/valid-parentheses/",
       "difficulty": "Easy",
       "createdAt": "2023-05-29T12:30:00Z"
-    },
-    {
-      "id": "16",
-      "title": "Merge Two Sorted Lists",
-      "description": "Merge two sorted linked lists and return it as a new sorted list.",
-      "resourceLink": "https://leetcode.com/problems/merge-two-sorted-lists/",
-      "practiceLink": "https://leetcode.com/problems/merge-two-sorted-lists/",
-      "difficulty": "Easy",
-      "createdAt": "2023-05-30T08:00:00Z"
     },
     {
       "id": "17",
@@ -181,13 +100,13 @@
       "createdAt": "2025-05-21T09:56:37.181Z"
     },
     {
-      "id": "726f",
-      "title": "Add a new coding problem to the platform",
-      "description": "Add a new coding problem to the platform",
-      "resourceLink": "https://leetcode.com/problems/gas-station/description/",
-      "practiceLink": "",
-      "difficulty": "Easy",
-      "createdAt": "2025-05-23T06:46:30.028Z"
+      "title": "Text Justification",
+      "description": "Given an array of strings words and a width maxWidth, format the text such that each line has exactly maxWidth characters and is fully (left and right) justified.\n\nYou should pack your words in a greedy approach; that is, pack as many words as you can in each line. Pad extra spaces ' ' when necessary so that each line has exactly maxWidth characters.\n\nExtra spaces between words should be distributed as evenly as possible. If the number of spaces on a line does not divide evenly between words, the empty slots on the left will be assigned more spaces than the slots on the right.\n\nFor the last line of text, it should be left-justified, and no extra space is inserted between words.",
+      "resourceLink": "https://leetcode.com/problems/text-justification/",
+      "practiceLink": "https://leetcode.com/problems/text-justification/",
+      "difficulty": "Hard",
+      "createdAt": "2025-05-30T08:02:25.581Z",
+      "id": "EGVKpAU"
     }
   ],
   "dashboard": {
@@ -315,5 +234,98 @@
         ]
       }
     }
-  }
+  },
+  "activityLog": [
+    {
+      "user": "c201012@ugrad.iiuc.ac.bd",
+      "problemName": "Add a new coding problem to the platform",
+      "action": "deleted",
+      "date": "2025-05-30T05:18:04.796Z",
+      "id": 1
+    },
+    {
+      "user": "c201012@ugrad.iiuc.ac.bd",
+      "problemName": "Longest Nishi ",
+      "action": "deleted",
+      "date": "2025-05-30T05:18:45.766Z",
+      "id": 2
+    },
+    {
+      "user": "c201012@ugrad.iiuc.ac.bd",
+      "problemName": "Reverse Integer",
+      "action": "deleted",
+      "date": "2025-05-30T05:23:43.482Z",
+      "id": 3
+    },
+    {
+      "user": "c201012@ugrad.iiuc.ac.bd",
+      "problemName": "Longest Palindromic Substring",
+      "action": "deleted",
+      "date": "2025-05-30T05:35:29.322Z",
+      "id": 4
+    },
+    {
+      "user": "c201012@ugrad.iiuc.ac.bd",
+      "problemName": "String to Integer (atoi)",
+      "action": "deleted",
+      "date": "2025-05-30T06:26:13.021Z",
+      "id": 5
+    },
+    {
+      "user": "durjoy1971office@gmail.com",
+      "problemName": "Roman to Integer",
+      "action": "deleted",
+      "date": "2025-05-30T07:48:57.155Z",
+      "id": 6
+    },
+    {
+      "user": "durjoy1971office@gmail.com",
+      "problemName": "3Sum",
+      "action": "deleted",
+      "date": "2025-05-30T07:49:12.343Z",
+      "id": 7
+    },
+    {
+      "user": "c201012@ugrad.iiuc.ac.bd",
+      "problemName": "Merge Two Sorted Lists",
+      "action": "deleted",
+      "date": "2025-05-30T07:49:42.962Z",
+      "id": 8
+    },
+    {
+      "user": "c201012@ugrad.iiuc.ac.bd",
+      "problemName": "Text Justification",
+      "action": "created",
+      "date": "2025-05-30T08:02:25.828Z",
+      "id": 9
+    },
+    {
+      "user": "c201012@ugrad.iiuc.ac.bd",
+      "problemName": "Text Justification",
+      "action": "edited",
+      "date": "2025-05-30T08:03:21.090Z",
+      "id": 10
+    },
+    {
+      "user": "c201012@ugrad.iiuc.ac.bd",
+      "problemName": "Scramble String",
+      "action": "created",
+      "date": "2025-05-30T08:06:41.639Z",
+      "id": 11
+    },
+    {
+      "user": "c201012@ugrad.iiuc.ac.bd",
+      "problemName": "Scramble String",
+      "action": "edited",
+      "date": "2025-05-30T08:07:11.385Z",
+      "id": 12
+    },
+    {
+      "user": "c201012@ugrad.iiuc.ac.bd",
+      "problemName": "Scramble String",
+      "action": "deleted",
+      "date": "2025-05-30T08:07:20.288Z",
+      "id": 13
+    }
+  ]
 }

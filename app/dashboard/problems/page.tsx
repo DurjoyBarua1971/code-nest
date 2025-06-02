@@ -142,6 +142,8 @@ export default function Problems() {
       <Card className="shadow-xl border border-gray-200 rounded-lg">
         <ProblemTable
           problems={problems}
+          setProblems={setProblems}
+          setTotalItems={setTotalItems}
           loading={loading}
           header={renderHeader()}
           totalItems={totalItems}

@@ -9,7 +9,7 @@ import { Dropdown } from "primereact/dropdown";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 import { useRouter, useSearchParams } from "next/navigation";
-import { api } from "@/app/lib/api";
+import { api, getCurrentUsername, logActivity } from "@/app/lib/api";
 import { classNames } from "primereact/utils";
 
 interface ProblemFormData {
@@ -29,7 +29,13 @@ export default function CreateProblem() {
   const isEditMode = searchParams?.get("edit") === "true";
   const problemId = searchParams?.get("id");
 
-  const { control, handleSubmit, setValue, getValues, formState: { errors, isSubmitting } } = useForm<ProblemFormData>({
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    getValues,
+    formState: { errors, isSubmitting },
+  } = useForm<ProblemFormData>({
     defaultValues: {
       title: "",
       description: "",
@@ -82,14 +88,36 @@ export default function CreateProblem() {
 
       if (isEditMode) {
         await api.put(`/problems/${data.id}`, problemData);
+        try {
+          const user = await getCurrentUsername();
+          await logActivity({
+            user: user || "Unknown User",
+            problemName: problemData.title,
+            action: "edited",
+          });
+        } catch (logError) {
+          console.warn("Activity log failed:", logError);
+        }
       } else {
         await api.post(`/problems`, problemData);
+        try {
+          const user = await getCurrentUsername();
+          await logActivity({
+            user: user || "Unknown User",
+            problemName: problemData.title,
+            action: "created",
+          });
+        } catch (logError) {
+          console.warn("Activity log failed:", logError);
+        }
       }
 
       toast.current?.show({
         severity: "success",
         summary: "Success",
-        detail: isEditMode ? "Problem updated successfully" : "Problem created successfully",
+        detail: isEditMode
+          ? "Problem updated successfully"
+          : "Problem created successfully",
         life: 3000,
       });
 
@@ -123,7 +151,9 @@ export default function CreateProblem() {
       <div className="mb-6">
         <h1 className="text-4xl font-bold text-gray-800 mb-2 flex items-center">
           <i
-            className={`pi ${isEditMode ? "pi-pencil" : "pi-plus-circle"} mr-3 text-blue-500`}
+            className={`pi ${
+              isEditMode ? "pi-pencil" : "pi-plus-circle"
+            } mr-3 text-blue-500`}
           ></i>
           {isEditMode ? "Edit Problem" : "Create New Problem"}
         </h1>
@@ -135,7 +165,10 @@ export default function CreateProblem() {
       </div>
 
       <Card className="shadow-xl border border-gray-200 rounded-lg">
-        <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="grid grid-cols-1 md:grid-cols-2 gap-6"
+        >
           <div className="p-field col-span-2">
             <label
               htmlFor="title"
@@ -146,17 +179,27 @@ export default function CreateProblem() {
             <Controller
               name="title"
               control={control}
-              rules={{ required: "Title is required", minLength: { value: 3, message: "Title must be at least 3 characters" } }}
+              rules={{
+                required: "Title is required",
+                minLength: {
+                  value: 3,
+                  message: "Title must be at least 3 characters",
+                },
+              }}
               render={({ field }) => (
                 <InputText
                   id="title"
                   {...field}
                   placeholder="Enter a descriptive title"
-                  className={classNames("w-full p-3", { "p-invalid": errors.title })}
+                  className={classNames("w-full p-3", {
+                    "p-invalid": errors.title,
+                  })}
                 />
               )}
             />
-            {errors.title && <small className="p-error">{errors.title.message}</small>}
+            {errors.title && (
+              <small className="p-error">{errors.title.message}</small>
+            )}
           </div>
 
           <div className="p-field col-span-2">
@@ -169,18 +212,28 @@ export default function CreateProblem() {
             <Controller
               name="description"
               control={control}
-              rules={{ required: "Description is required", minLength: { value: 10, message: "Description must be at least 10 characters" } }}
+              rules={{
+                required: "Description is required",
+                minLength: {
+                  value: 10,
+                  message: "Description must be at least 10 characters",
+                },
+              }}
               render={({ field }) => (
                 <InputTextarea
                   id="description"
                   {...field}
                   rows={5}
                   placeholder="Describe the problem in detail"
-                  className={classNames("w-full", { "p-invalid": errors.description })}
+                  className={classNames("w-full", {
+                    "p-invalid": errors.description,
+                  })}
                 />
               )}
             />
-            {errors.description && <small className="p-error">{errors.description.message}</small>}
+            {errors.description && (
+              <small className="p-error">{errors.description.message}</small>
+            )}
           </div>
 
           <div className="p-field">
@@ -195,18 +248,25 @@ export default function CreateProblem() {
               control={control}
               rules={{
                 required: "Resource link is required",
-                pattern: { value: urlPattern, message: "Please enter a valid URL" },
+                pattern: {
+                  value: urlPattern,
+                  message: "Please enter a valid URL",
+                },
               }}
               render={({ field }) => (
                 <InputText
                   id="resourceLink"
                   {...field}
                   placeholder="URL to learning resource"
-                  className={classNames("w-full", { "p-invalid": errors.resourceLink })}
+                  className={classNames("w-full", {
+                    "p-invalid": errors.resourceLink,
+                  })}
                 />
               )}
             />
-            {errors.resourceLink && <small className="p-error">{errors.resourceLink.message}</small>}
+            {errors.resourceLink && (
+              <small className="p-error">{errors.resourceLink.message}</small>
+            )}
           </div>
 
           <div className="p-field">
@@ -220,18 +280,25 @@ export default function CreateProblem() {
               name="practiceLink"
               control={control}
               rules={{
-                pattern: { value: urlPattern, message: "Please enter a valid URL" },
+                pattern: {
+                  value: urlPattern,
+                  message: "Please enter a valid URL",
+                },
               }}
               render={({ field }) => (
                 <InputText
                   id="practiceLink"
                   {...field}
                   placeholder="URL to practice this problem"
-                  className={classNames("w-full", { "p-invalid": errors.practiceLink })}
+                  className={classNames("w-full", {
+                    "p-invalid": errors.practiceLink,
+                  })}
                 />
               )}
             />
-            {errors.practiceLink && <small className="p-error">{errors.practiceLink.message}</small>}
+            {errors.practiceLink && (
+              <small className="p-error">{errors.practiceLink.message}</small>
+            )}
           </div>
 
           <div className="p-field">
@@ -252,12 +319,16 @@ export default function CreateProblem() {
                   options={difficulties}
                   optionLabel="name"
                   placeholder="Select Difficulty"
-                  className={classNames("w-full", { "p-invalid": errors.difficulty })}
+                  className={classNames("w-full", {
+                    "p-invalid": errors.difficulty,
+                  })}
                   onChange={(e) => field.onChange(e.value)}
                 />
               )}
             />
-            {errors.difficulty && <small className="p-error">{errors.difficulty.message}</small>}
+            {errors.difficulty && (
+              <small className="p-error">{errors.difficulty.message}</small>
+            )}
           </div>
 
           <div className="col-span-2 flex flex-wrap justify-end gap-3 mt-6">
@@ -277,7 +348,15 @@ export default function CreateProblem() {
             />
             <Button
               type="submit"
-              label={isSubmitting ? (isEditMode ? "Updating..." : "Saving...") : (isEditMode ? "Update Problem" : "Save Problem")}
+              label={
+                isSubmitting
+                  ? isEditMode
+                    ? "Updating..."
+                    : "Saving..."
+                  : isEditMode
+                  ? "Update Problem"
+                  : "Save Problem"
+              }
               icon={isEditMode ? "pi pi-check" : "pi pi-save"}
               loading={isSubmitting}
               disabled={isSubmitting}

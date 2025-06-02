@@ -22,6 +22,8 @@ interface ProblemTableProps {
   currentPage: number;
   itemsPerPage: number;
   onPageChange: (e: { page: number; rows: number }) => void;
+  setProblems: (problems: Problem[]) => void;
+  setTotalItems: (total: number) => void;
 }
 
 export default function ProblemTable({
@@ -32,6 +34,8 @@ export default function ProblemTable({
   currentPage,
   itemsPerPage,
   onPageChange,
+  setProblems,
+  setTotalItems,
 }: ProblemTableProps) {
   if (loading) {
     return (
@@ -93,7 +97,7 @@ export default function ProblemTable({
         <Column
           align="center"
           alignHeader="center"
-          body={actionBodyTemplate}
+          body={actionBodyTemplate(setProblems, setTotalItems, problems)}
           header="Actions"
         />
       </DataTable>

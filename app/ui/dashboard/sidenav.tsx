@@ -10,8 +10,8 @@ import { Divider } from "primereact/divider";
 import { Avatar } from "primereact/avatar";
 import { signOut } from "@/app/lib/action";
 import createClientForBrowser from "@/app/lib/supabase/client";
-import type { MenuItem } from 'primereact/menuitem';
-import type { User } from '@supabase/supabase-js';
+import type { MenuItem } from "primereact/menuitem";
+import type { User } from "@supabase/supabase-js";
 
 export default function FullScreenDemo() {
   const [visible, setVisible] = useState<boolean>(false);
@@ -22,7 +22,9 @@ export default function FullScreenDemo() {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (user) {
         setUser(user);
       }
@@ -56,6 +58,13 @@ export default function FullScreenDemo() {
           },
         },
         {
+          label: "Activity",
+          icon: "pi pi-history",
+          command: () => {
+            router.push("/dashboard/activity-log");
+          },
+        },
+        {
           label: "Logout",
           icon: "pi pi-sign-out",
           command: async () => {
@@ -68,7 +77,8 @@ export default function FullScreenDemo() {
 
   const userName = user?.user_metadata?.full_name || user?.email || "User";
   // const userAvatar = user?.user_metadata?.avatar_url || "https://www.gravatar.com/avatar/05dfd4b41340d09cae045235eb0893c3?d=mp";
-  const userAvatar = "https://www.gravatar.com/avatar/05dfd4b41340d09cae045235eb0893c3?d=mp";
+  const userAvatar =
+    "https://www.gravatar.com/avatar/05dfd4b41340d09cae045235eb0893c3?d=mp";
 
   return (
     <div className="card flex">
@@ -80,11 +90,7 @@ export default function FullScreenDemo() {
           </div>
           <div className="w-full flex flex-col items-center">
             <Divider />
-            <Avatar
-              image={userAvatar}
-              size="xlarge"
-              shape="circle"
-            />
+            <Avatar image={userAvatar} size="xlarge" shape="circle" />
             <p className="mt-2 text-lg font-medium text-gray-700">{userName}</p>
           </div>
         </div>

@@ -16,3 +16,11 @@ export type ProblemQueryParams = {
   createdAt_gte?: string;
   createdAt_lte?: string;
 };
+
+export interface ActivityLogEntry {
+  id: string;
+  user: string;
+  problemName: string;
+  action: "created" | "edited" | "deleted";
+  date: string;
+}
